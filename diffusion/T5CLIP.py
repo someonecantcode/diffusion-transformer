@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoTokenizer, CLIPTextModelWithProjection, T5EncoderModel
+from transformers import AutoTokenizer, CLIPTextModelWithProjection, T5EncoderModel, logging
 
 class ConditioningEncoders():
     def __init__(self, device, clip_max_length: int = 64, torch_dtype = torch.bfloat16, debugging: bool = True):
@@ -7,6 +7,7 @@ class ConditioningEncoders():
         self.clip_max_length = clip_max_length
         self.debugging = debugging
         
+        logging.set_verbosity_error()
         self.t5_tokenizer = AutoTokenizer.from_pretrained("google/t5-v1_1-small")
         if debugging is False:
             self.clip_l_tokenizer = AutoTokenizer.from_pretrained("openai/clip-vit-large-patch14")
@@ -18,6 +19,12 @@ class ConditioningEncoders():
 
         self.clip_s_encoder = CLIPTextModelWithProjection.from_pretrained("openai/clip-vit-base-patch32", weights_only=True, torch_dtype=torch_dtype).to(device).eval()
         
+        #----
+        self.t5_dim = self.t5_encoder.config.d_model
+        self.pooled_dim = self.clip_s_encoder.config.projection_dim
+        if debugging is False:
+            self.pooled_dim += self.clip_l_encoder.config.projection_dim
+    
     @torch.no_grad()
     def encode(self, captions: list) -> tuple[torch.Tensor]:
         t5_tokens = self.t5_tokenizer(captions, padding=True, truncation=True, return_tensors="pt").to(self.device)
