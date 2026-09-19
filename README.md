@@ -1,6 +1,13 @@
 # diffusion-transformer
 Attempt at implementing DiT towards flow matching images.
 
+## Set-up
+
+```bash
+pip install -r requirements.txt
+pip install torch torchvision einops protobuf sentencepiece transformers numpy matplotlib ipython ipywidgets
+```
+
 ## References
 
 Esser, P., et al. (2024). Scaling rectified flow transformers for high-resolution image synthesis. arXiv preprint arXiv:2403.03206. https://doi.org/10.48550/arXiv.2403.03206

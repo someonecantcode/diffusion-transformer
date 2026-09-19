@@ -2,9 +2,9 @@ import torch
 from transformers import AutoTokenizer, CLIPTextModelWithProjection, T5EncoderModel, logging
 
 class ConditioningEncoders():
-    def __init__(self, device, clip_max_length: int = 64, torch_dtype = torch.bfloat16, debugging: bool = True):
+    def __init__(self, device, seq_max_length: int = 64, torch_dtype = torch.float32, debugging: bool = True):
         self.device = device
-        self.clip_max_length = clip_max_length
+        self.seq_max_length = seq_max_length
         self.debugging = debugging
         
         logging.set_verbosity_error()
@@ -27,18 +27,17 @@ class ConditioningEncoders():
     
     @torch.no_grad()
     def encode(self, captions: list) -> tuple[torch.Tensor]:
-        t5_tokens = self.t5_tokenizer(captions, padding=True, truncation=True, return_tensors="pt").to(self.device)
+        t5_tokens = self.t5_tokenizer(captions, padding="max_length", max_length=self.seq_max_length, truncation=True, return_tensors="pt").to(self.device)
         if self.debugging is False:
-            clip_l_tokens = self.clip_l_tokenizer(captions, padding="max_length", max_length=self.clip_max_length, truncation=True, return_tensors="pt").to(self.device)
-        clip_s_tokens = self.clip_s_tokenizer(captions, padding="max_length", max_length=self.clip_max_length, truncation=True, return_tensors="pt").to(self.device)
+            clip_l_tokens = self.clip_l_tokenizer(captions, padding="max_length", max_length=self.seq_max_length, truncation=True, return_tensors="pt").to(self.device)
+        clip_s_tokens = self.clip_s_tokenizer(captions, padding="max_length", max_length=self.seq_max_length, truncation=True, return_tensors="pt").to(self.device)
+    
+        if self.debugging is False:
+            pooled_l = self.clip_l_encoder(clip_l_tokens.input_ids, output_hidden_states=False, attention_mask=clip_l_tokens.attention_mask).text_embeds
+        pooled_s = self.clip_s_encoder(clip_s_tokens.input_ids, output_hidden_states=True, attention_mask=clip_s_tokens.attention_mask).text_embeds
+        # In SD3, t5_seq is suppose to be concatted and padded with the clip hidden_states. Seen as optional in FLUX.1
+        t5_seq = self.t5_encoder(t5_tokens.input_ids, output_hidden_states=False, attention_mask=t5_tokens.attention_mask).last_hidden_state
         
-        with torch.no_grad():
-            if self.debugging is False:
-                pooled_l = self.clip_l_encoder(clip_l_tokens.input_ids, output_hidden_states=False).text_embeds
-            pooled_s = self.clip_s_encoder(clip_s_tokens.input_ids, output_hidden_states=True).text_embeds
-            # In SD3, t5_seq is suppose to be concatted and padded with the clip hidden_states. Seen as optional in FLUX.1
-            t5_seq = self.t5_encoder(t5_tokens.input_ids, output_hidden_states=False, attention_mask=t5_tokens.attention_mask).last_hidden_state
-            
         if self.debugging is False:
             pooled_cat = torch.cat([pooled_l, pooled_s], dim = -1)
         else:
