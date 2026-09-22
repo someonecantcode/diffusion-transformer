@@ -113,7 +113,7 @@ class VAE(nn.Module):
     def decode(self, x: torch.Tensor) -> torch.Tensor:
         return self.decoder(x)
 
-    def forward(self, x: torch.Tensor, lpips_loss_function, beta: float = 1.0, fft_weight: float = 1.0) -> tuple[torch.Tensor, ...]: #  lpips_loss_function: lpips.LPIPS,
+    def forward(self, x: torch.Tensor, lpips_loss_function, beta: float = 1.0, fft_weight: float = 1.0, lpips_weight: float = 1.0) -> tuple[torch.Tensor, ...]: #  lpips_loss_function: lpips.LPIPS,
         latent, mu, logvar = self.encode(x)
         output = self.decode(latent)
         
@@ -122,8 +122,8 @@ class VAE(nn.Module):
         else:
             recon_loss = F.l1_loss(input=output, target=x)
             kl_loss = -0.5 * (1 + logvar - mu.pow(2) - logvar.exp()).mean()
-            fft_loss = F.l1_loss(input=torch.fft.rfft2(output, dim=(-2, -1)).abs(), target=torch.fft.rfft2(x, dim=(-2, -1)).abs())
+            fft_loss = F.l1_loss(input=torch.log1p(torch.fft.rfft2(output, dim=(-2, -1)).abs()), target=torch.log1p(torch.fft.rfft2(x, dim=(-2, -1)).abs()))
             loss = recon_loss + (beta) * kl_loss + (fft_weight) * fft_loss
             if lpips_loss_function is not None: # lpips is kinda slow
-                loss += lpips_loss_function(x, output).mean()  
+                loss += (lpips_weight) * lpips_loss_function(x, output).mean()  
         return output.detach(), loss

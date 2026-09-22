@@ -1,8 +1,10 @@
 # checkpoints and dataset files
 *.pt
 *.tar
+*.arrow
 **/wandb/
 .vscode
+**/.inductor_cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

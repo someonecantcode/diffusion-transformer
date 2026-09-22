@@ -1,0 +1,119 @@
+{
+  "builder_name": "webdataset",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "gpic",
+  "dataset_size": 16526552314,
+  "description": "",
+  "download_size": 25381253120,
+  "features": {
+    "json": {
+      "retrieved_at": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "license": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "license_url": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "attribution": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "key": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "img_width": {
+        "dtype": "int64",
+        "_type": "Value"
+      },
+      "img_height": {
+        "dtype": "int64",
+        "_type": "Value"
+      },
+      "split": {
+        "feature": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "_type": "List"
+      },
+      "caption_type": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "caption": {
+        "dtype": "string",
+        "_type": "Value"
+      }
+    },
+    "jpg": {
+      "_type": "Image"
+    },
+    "__key__": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "__url__": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 41907805434,
+  "splits": {
+    "val": {
+      "name": "val",
+      "num_bytes": 16526552314,
+      "num_examples": 199956,
+      "shard_lengths": [
+        6200,
+        5500,
+        6200,
+        6100,
+        6100,
+        6100,
+        6000,
+        6100,
+        6100,
+        6100,
+        6100,
+        6100,
+        6100,
+        6100,
+        6200,
+        6100,
+        6100,
+        6100,
+        6100,
+        6100,
+        6100,
+        6100,
+        6100,
+        6200,
+        6200,
+        6100,
+        6200,
+        6200,
+        6100,
+        6200,
+        6100,
+        6100,
+        4656
+      ],
+      "dataset_name": "gpic"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
