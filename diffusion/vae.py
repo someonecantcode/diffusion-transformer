@@ -29,10 +29,17 @@ class DownBlock(nn.Module):
         return self.down_conv(x)
     
 class UpBlock(nn.Module):
+    """
+    https://distill.pub/2016/deconv-checkerboard/
+    """
     def __init__(self, in_channels: int, out_channels: int, resnet_blocks: int = 4):
         super().__init__()
         self.resnets = nn.Sequential(*[ResNet(dim=in_channels) for _ in range(resnet_blocks)])
-        self.up_conv = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=3, stride=2, padding=1, output_padding=1)
+        self.up_conv = nn.Sequential(
+            nn.Upsample(scale_factor=2, mode="nearest"),
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
+        )
+        # nn.ConvTranspose2d(in_channels, out_channels, kernel_size=3, stride=2, padding=1, output_padding=1)
         
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.resnets(x)
@@ -85,6 +92,10 @@ class Encoder(nn.Module):
     
 class Decoder(nn.Module):
     def __init__(self, channels: tuple[int, ...], z_channels: int, n_channels: int, resnet_blocks: int = 4):
+        """
+        input: (B, z_channels, H/f, W/f)
+        output: (B, C, H, W)
+        """
         super().__init__()
         self.upsample = nn.Sequential(
             nn.Conv2d(z_channels, channels[-1], kernel_size=3, padding=1),
@@ -98,12 +109,12 @@ class Decoder(nn.Module):
 class VAE(nn.Module):
     def __init__(self, n_channels: int, latent_channels: tuple[int, ...], z_channels: int, n_heads: int, resnet_blocks: int = 4, bottleneck_layers: int = 4):
         """
-        input: (B, C, H, W)
-        latent: (B, z_channels, H/f, W/f), f = 2^len(latent_channels)
+        input/output: (B, C, H, W)
+        latent: (B, z_channels, H/f, W/f), f = 2^len(latent_channels)-1
         """
         super().__init__()
         self.encoder = Encoder(latent_channels, z_channels, n_heads, resnet_blocks, bottleneck_layers)
-        self.decoder = Decoder(latent_channels, z_channels, n_channels)
+        self.decoder = Decoder(latent_channels, z_channels, n_channels, resnet_blocks)
     
     def encode(self, x: torch.Tensor) -> tuple[torch.Tensor, ...]:
         mu, logvar = self.encoder(x)
@@ -113,7 +124,7 @@ class VAE(nn.Module):
     def decode(self, x: torch.Tensor) -> torch.Tensor:
         return self.decoder(x)
 
-    def forward(self, x: torch.Tensor, lpips_loss_function, beta: float = 1.0, fft_weight: float = 1.0, lpips_weight: float = 1.0) -> tuple[torch.Tensor, ...]: #  lpips_loss_function: lpips.LPIPS,
+    def forward(self, x: torch.Tensor, lpips_loss_function=None, beta: float = 1.0, fft_weight: float = 1.0, lpips_weight: float = 1.0) -> tuple[torch.Tensor, ...]: #  lpips_loss_function: lpips.LPIPS,
         latent, mu, logvar = self.encode(x)
         output = self.decode(latent)
         
@@ -122,7 +133,10 @@ class VAE(nn.Module):
         else:
             recon_loss = F.l1_loss(input=output, target=x)
             kl_loss = -0.5 * (1 + logvar - mu.pow(2) - logvar.exp()).mean()
-            fft_loss = F.l1_loss(input=torch.log1p(torch.fft.rfft2(output, dim=(-2, -1)).abs()), target=torch.log1p(torch.fft.rfft2(x, dim=(-2, -1)).abs()))
+            fft_loss = F.l1_loss(
+                input=torch.log1p(torch.fft.rfft2(output.float(), dim=(-2, -1)).abs()),
+                target=torch.log1p(torch.fft.rfft2(x.float(), dim=(-2, -1)).abs())
+            )
             loss = recon_loss + (beta) * kl_loss + (fft_weight) * fft_loss
             if lpips_loss_function is not None: # lpips is kinda slow
                 loss += (lpips_weight) * lpips_loss_function(x, output).mean()  
