@@ -43,7 +43,7 @@ class ConditioningEncoders():
         else:
             pooled_cat = pooled_s
             
-        return t5_seq, pooled_cat
+        return t5_seq, pooled_cat, t5_tokens.attention_mask.bool()
 
 if __name__ == '__main__':
     captions = ["Are you a smart fella or a fart smella?",

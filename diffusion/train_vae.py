@@ -37,12 +37,12 @@ def main():
     dataloader = torch.utils.data.DataLoader(dataset['train'], batch_size=batch_size, pin_memory=False)
     data_iter = iter(dataloader)
     # ------------------------------------------------------------
-    total_steps: int = 30000
+    total_steps: int = 10000
     lr_cooldown_steps: int = 15000
     lr = 1e-4
-    kl_beta = 1e-4
+    kl_beta = 5e-2
     fft_weight = 0.05
-    lpips_weight = 0.05
+    lpips_weight = 0.5
     latent_channels = [128, 256, 512, 512]
     z_channels = 32
     model = VAE(
@@ -55,11 +55,11 @@ def main():
     # model = torch.compile(model)
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
     
-    starting_step = 15000
-    model.load_state_dict(torch.load(f"./saved_models/vae_compiled_{starting_step}.pt", weights_only=True))
-    optimizer.load_state_dict(torch.load(f"./saved_models/vae_optim_compiled_{starting_step}.pt", weights_only=True))
+    starting_step = 0
+    #model.load_state_dict(torch.load(f"./saved_models/vae_compiled_{starting_step}.pt", weights_only=True))
+    # optimizer.load_state_dict(torch.load(f"./saved_models/vae_optim_compiled_{starting_step}.pt", weights_only=True))
     ema = EMA(model)
-    ema.load(f"./saved_models/vae_compiled_{starting_step}_ema.pt")
+    # ema.load(f"./saved_models/vae_compiled_{starting_step}_ema.pt")
     print(sum(p.numel() for p in model.parameters()), "total parameters")
     # ------------------------------------------------------------
 
@@ -108,7 +108,7 @@ def main():
                 run.log({"loss": loss_item, "norm": norm_item, "lr": lr})
                 print(f"step: {step:5d} | loss: {loss_item:8.4f} | norm: {norm_item:8.4f} | lr: {lr:.9f}", flush=True)
                 
-            if step % 5000 == 0:
+            if step % 2000 == 0:
                 torch.save(model.state_dict(), f"./saved_models/vae_compiled_{step}.pt")
                 torch.save(optimizer.state_dict(), f"./saved_models/vae_optim_compiled_{step}.pt")
                 ema.checkpoint(f"./saved_models/vae_compiled_{step}_ema.pt")

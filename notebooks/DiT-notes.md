@@ -74,5 +74,17 @@ I'm guessing the MLP is just a projection to the proper dimension.
 
 ## tasks today
 
-* conv vae
 * positional embedding
+* t5 and clip attn mask
+* rectified cfg++ and dropout mask
+* single stream attention block
+* training loop + dataset(done)
+* ddp
+
+## VAE Plan
+
+Use convolutional resnets to down sample and reconstruct. Bottle neck will use attention and some more convolutional resnets to return our mu and log var. For loss, simply use L1 MAE reconstruction loss, simple DKL loss with latent to guassian distribution, and LPIPS loss.
+
+Better models, use GANs? We can use FFT loss for finer details.
+
+Interesting: <https://arxiv.org/pdf/2605.13565>
