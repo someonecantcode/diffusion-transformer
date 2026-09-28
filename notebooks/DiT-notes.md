@@ -74,12 +74,11 @@ I'm guessing the MLP is just a projection to the proper dimension.
 
 ## tasks today
 
-* positional embedding
-* t5 and clip attn mask
-* rectified cfg++ and dropout mask
-* single stream attention block
-* training loop + dataset(done)
-* ddp
+* positional embedding to attn layers
+* training loop + arrow dataset
+* rectified cfg++ sampling
+* ddp (pretty sure just pass rank to dataloader)
+
 
 ## VAE Plan
 
@@ -88,3 +87,7 @@ Use convolutional resnets to down sample and reconstruct. Bottle neck will use a
 Better models, use GANs? We can use FFT loss for finer details.
 
 Interesting: <https://arxiv.org/pdf/2605.13565>
+
+## Dataset
+
+Standard hugging face dataset download and filter. 100% do `pin_memory=True`. 

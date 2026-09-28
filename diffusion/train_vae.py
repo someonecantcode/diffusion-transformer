@@ -34,7 +34,7 @@ def main():
         return {"pixel_values": images}
 
     dataset = dataset.with_transform(transform_batch)
-    dataloader = torch.utils.data.DataLoader(dataset['train'], batch_size=batch_size, pin_memory=False)
+    dataloader = torch.utils.data.DataLoader(dataset['train'], batch_size=batch_size, pin_memory=True)
     data_iter = iter(dataloader)
     # ------------------------------------------------------------
     total_steps: int = 10000
