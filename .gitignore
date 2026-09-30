@@ -5,6 +5,7 @@
 **/wandb/
 .vscode
 **/.inductor_cache
+*.out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

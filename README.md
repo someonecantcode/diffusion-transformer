@@ -1,17 +1,60 @@
 # diffusion-transformer
-Attempt at implementing DiT towards flow matching images.
+
+Attempt at implementing a frankensteined hybrid SD3/FLUX.1-inspired MM-DiT for latent flow matching (LFM) image generation.
+
 
 ## Set-up
 
+Main files in [`diffusion/`](diffusion/)
+
+Training: [`diffusion/train.py`](diffusion/train.py), [`diffusion/train_vae.py`](diffusion/train_vae.py)
+
+Models: [`diffusion/model.py`](diffusion/model.py), [`diffusion/vae.py`](diffusion/vae.py)
+
+### Environments and Packages
+
 ```bash
+git clone https://github.com/someonecantcode/diffusion-transformer.git
+cd diffusion-transformer
+
+conda create -name myenv python=3.12
+conda activate myenv
 pip install -r requirements.txt
-pip install torch torchvision einops protobuf sentencepiece transformers numpy matplotlib ipython ipywidgets
+```
+
+### Dataset Preparation
+
+**GPIC Image Dataset**
+
+Please run the following:
+
+```bash
+cd data
+python download_data.py
+```
+
+### Training
+
+To begin training without SLURM:
+
+```bash
+cd diffusion
+python train_vae.py
+python train.py
+```
+
+With SLURM:
+
+```bash
+cd diffusion
+sbatch vae_batchjob.py
+sbatch flowmatch_job.py
 ```
 
 ## References
 
 Esser, P., et al. (2024). Scaling rectified flow transformers for high-resolution image synthesis. arXiv preprint arXiv:2403.03206. https://doi.org/10.48550/arXiv.2403.03206
 
-Peebles, W., & Xie, S. (2023). Scalable diffusion models with transformers. arXiv preprint arXiv:2212.09748. https://doi.org/10.48550/arXiv.2212.09748
+Greenberg, O. (2025). Demystifying Flux architecture. arXiv preprint arXiv:2507.09595. https://doi.org/10.48550/arXiv.2507.09595
 
-Z-Image Team, et al. (2025). Z-Image: An efficient image generation foundation model with single-stream diffusion transformer. arXiv preprint arXiv:2511.22699. https://doi.org/10.48550/arXiv.2511.22699
+Peebles, W., & Xie, S. (2023). Scalable diffusion models with transformers. arXiv preprint arXiv:2212.09748. https://doi.org/10.48550/arXiv.2212.09748
