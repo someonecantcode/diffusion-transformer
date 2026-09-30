@@ -23,8 +23,12 @@ We do a sin-cos positional embedding and then never again in the transformer blo
 
 FlUX.1:
 
-**I am following this.**
+**planned to follow this**
 Assign (h, w) positional ids on each patch and then 2D RoPE(Q, K) for every layer
+
+Scuffed Method:
+
+simple (N,D) positional embedding matrix we add at the start.
 
 ### Time Steps
 
@@ -74,10 +78,9 @@ I'm guessing the MLP is just a projection to the proper dimension.
 
 ## tasks today
 
-* positional embedding to attn layers
-* training loop + arrow dataset
-* rectified cfg++ sampling
-* ddp (pretty sure just pass rank to dataloader)
+* add basic positional embedding DONE
+* add rope to attn layers when have time
+* FID research or use library `pytorch-fid`
 
 
 ## VAE Plan
@@ -90,4 +93,12 @@ Interesting: <https://arxiv.org/pdf/2605.13565>
 
 ## Dataset
 
-Standard hugging face dataset download and filter. 100% do `pin_memory=True`. 
+Standard hugging face dataset download and filter. 100% do `pin_memory=True` and pair with `.to(device, non_blocking=True)` for tensors. 
+
+## FID
+>
+> <https://github.com/mseitzer/pytorch-fid>
+
+$\text{FID} = \|\mu_r - \mu_g\|_2^2 + \text{Tr}(\Sigma_r + \Sigma_g - 2\sqrt{\Sigma_r\Sigma_g})$
+Trace
+

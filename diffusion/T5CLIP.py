@@ -51,8 +51,8 @@ if __name__ == '__main__':
                 "I am in fact about to explode."
                 ]
 
-    T5CLIP = ConditioningEncoders(device="cuda")
-    seq, pool = T5CLIP.encode(captions)
+    T5CLIP = ConditioningEncoders(device="cuda", debugging=False)
+    seq, pool, attn_mask = T5CLIP.encode(captions)
 
     # BxT(longest tokenized capation)xt5-seq-size, Bx(CLIP-L + CLIP+)
-    print(seq.shape, pool.shape) # torch.Size([3, 17, 512]) torch.Size([3, 1280])
+    print(seq.shape, pool.shape, attn_mask.shape) # torch.Size([3, 17, 512]) torch.Size([3, 1280])

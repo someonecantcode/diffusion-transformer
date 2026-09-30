@@ -91,7 +91,7 @@ class AdaLN(nn.Module):
 class DoubleStreamAttention(nn.Module): # TODO: RoPE 
     def __init__(self, d_model: int, n_heads: int):
         super().__init__()
-        
+        assert (d_model % n_heads == 0)
         self.n_heads = n_heads
         self.qkv_image_weights = nn.Linear(d_model, 3 * d_model, bias=False)
         self.qkv_text_weights = nn.Linear(d_model, 3 * d_model, bias=False)
@@ -224,6 +224,9 @@ class mmDiT(nn.Module):
             MLP(t_channels, d_model)
         )
         
+        N = int(height/patch_size * width/patch_size)
+        self.pos_embed = nn.Embedding(N, d_model)
+        
         self.pooled_mlp = MLP(pooled_dim, d_model)
         self.t5_proj = nn.Linear(t5_dim, d_model)
         self.null_cond_vector = nn.Parameter(torch.zeros(1, pooled_dim))
@@ -252,6 +255,7 @@ class mmDiT(nn.Module):
         pooled_cond = torch.where(cond_mask, self.null_cond_vector, pooled_cond)
         t5_cond = self.t5_proj(t5_cond)
         time_steps = self.time_embed(time_steps) + self.pooled_mlp(pooled_cond)
+        data = data + self.pos_embed(torch.arange(N, dtype=torch.long, device=device))
         
         # positional embedding?
         for block in self.mmDiTBlocks:
@@ -272,27 +276,27 @@ class mmDiT(nn.Module):
         return lambda_max * t ** gamma
     
     @torch.no_grad()
-    def sample(self, total_steps: int, t5_cond: torch.Tensor, time_steps: torch.Tensor, pooled_cond: torch.Tensor, attn_mask):
+    def sample(self, total_steps: int, t5_cond: torch.Tensor, pooled_cond: torch.Tensor, attn_mask):
         """
         Rectified CFG++
         https://arxiv.org/abs/2510.07631
         """
         outputs = []
         device = t5_cond.device
-        batch_size = time_steps.shape[0]
+        batch_size = t5_cond.shape[0]
         X_0 = torch.randn((batch_size, self.color_channels, self.height, self.width), device=device)
         
         for _, time_steps in enumerate(torch.linspace(0, 1, total_steps, device=device), start=1):
             outputs.append(X_0)
             time_steps = time_steps.expand(batch_size)
             half_step_ts = time_steps + (1 / (2 * total_steps)) 
-            with torch.autocast(device_type=device, dtype=torch.bfloat16):
+            with torch.autocast(device_type=device.type, dtype=torch.bfloat16):
                 # X_0 = X_0 + (1 / total_steps) * self(X_0, t5_cond, time_steps, pooled_cond, attn_mask)
-                v_cond = self(X_0, t5_cond, time_steps, pooled_cond, attn_mask, p_cond=0.0)
+                v_cond = self(X_0, t5_cond, time_steps, pooled_cond, attn_mask, p_drop=0.0)
                 half_step_x = X_0 + (1 / total_steps) * v_cond / 2
 
-                v_cond_half_step = self(half_step_x, t5_cond, half_step_ts, pooled_cond, attn_mask, p_cond=0.0)
-                v_uncond_half_step = self(half_step_x, t5_cond, half_step_ts, pooled_cond, attn_mask, p_cond=1.0)
+                v_cond_half_step = self(half_step_x, t5_cond, half_step_ts, pooled_cond, attn_mask, p_drop=0.0)
+                v_uncond_half_step = self(half_step_x, t5_cond, half_step_ts, pooled_cond, attn_mask, p_drop=1.0)
 
                 v_corrected = v_cond + self.alpha(time_steps, gamma=0, lambda_max=0.8) * (v_cond_half_step - v_uncond_half_step)
                 X_0 = X_0 + (1 / total_steps) * v_corrected
