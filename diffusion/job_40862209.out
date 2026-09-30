@@ -1,137 +1,0 @@
-________________________________________________________________________________
-Miniforge (conda) has been loaded.
-
-- Please create and work in your own conda environments:
-    conda create -n myenv python=3.12
-    conda activate myenv
-
-- To customize environment or package locations, edit your ~/.condarc:
-    envs_dirs:
-      - /path/to/your/envs
-    pkgs_dirs:
-      - /path/to/your/pkgs
-
-  For more information, see:
-    https://docs.conda.io/projects/conda/en/latest/configuration.html
-
-- If your personal Conda stops working after unloading this module, try:
-    source ~/.bashrc
-________________________________________________________________________________
-
-4
-Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 25011.15it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 27745.42it/s]
-
-Loading weights: 100%|██████████| 76/76 [00:00<00:00, 25779.79it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 26270.57it/s]
-
-Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights:   2%|▏         | 3/197 [00:00<00:32,  5.97it/s]Loading weights:   2%|▏         | 3/197 [00:00<00:56,  3.41it/s]Loading weights:   1%|          | 2/197 [00:00<00:22,  8.78it/s]Loading weights:   2%|▏         | 3/197 [00:00<00:58,  3.30it/s]Loading weights:   5%|▌         | 10/197 [00:01<00:18, 10.34it/s]Loading weights:   8%|▊         | 15/197 [00:00<00:08, 22.56it/s]Loading weights:  10%|▉         | 19/197 [00:01<00:08, 20.36it/s]Loading weights:   9%|▉         | 18/197 [00:00<00:05, 33.92it/s]Loading weights:   7%|▋         | 14/197 [00:01<00:13, 13.22it/s]Loading weights:  13%|█▎        | 25/197 [00:01<00:07, 23.60it/s]Loading weights:  13%|█▎        | 26/197 [00:00<00:04, 34.41it/s]Loading weights:  15%|█▍        | 29/197 [00:01<00:05, 28.55it/s]Loading weights:  10%|▉         | 19/197 [00:01<00:13, 13.41it/s]Loading weights:  16%|█▌        | 31/197 [00:01<00:06, 24.84it/s]Loading weights:  15%|█▍        | 29/197 [00:01<00:11, 15.26it/s]Loading weights:  11%|█         | 21/197 [00:01<00:13, 12.59it/s]Loading weights:  16%|█▌        | 32/197 [00:01<00:06, 25.00it/s]Loading weights:  18%|█▊        | 35/197 [00:01<00:06, 23.53it/s]Loading weights:  21%|██▏       | 42/197 [00:02<00:05, 27.06it/s]Loading weights:  18%|█▊        | 35/197 [00:01<00:06, 24.31it/s]Loading weights:  19%|█▉        | 38/197 [00:01<00:06, 23.14it/s]Loading weights:  23%|██▎       | 45/197 [00:02<00:03, 38.95it/s]Loading weights:  31%|███▏      | 62/197 [00:01<00:02, 54.59it/s]Loading weights:  31%|███▏      | 62/197 [00:01<00:02, 59.68it/s]Loading weights:  31%|███       | 61/197 [00:02<00:03, 44.61it/s]Loading weights:  43%|████▎     | 84/197 [00:02<00:01, 71.63it/s]Loading weights:  37%|███▋      | 72/197 [00:02<00:02, 57.41it/s]Loading weights:  35%|███▌      | 69/197 [00:01<00:02, 52.38it/s]Loading weights:  39%|███▊      | 76/197 [00:02<00:02, 59.65it/s]Loading weights:  42%|████▏     | 83/197 [00:02<00:02, 53.47it/s]Loading weights:  46%|████▌     | 90/197 [00:02<00:01, 58.40it/s]Loading weights:  44%|████▎     | 86/197 [00:01<00:01, 57.94it/s]Loading weights:  49%|████▊     | 96/197 [00:02<00:01, 56.38it/s]Loading weights:  47%|████▋     | 92/197 [00:03<00:02, 42.01it/s]Loading weights:  49%|████▉     | 97/197 [00:02<00:02, 45.54it/s]Loading weights:  54%|█████▍    | 106/197 [00:03<00:02, 44.55it/s]Loading weights:  54%|█████▍    | 107/197 [00:03<00:01, 50.95it/s]Loading weights:  54%|█████▍    | 106/197 [00:02<00:02, 42.84it/s]Loading weights:  56%|█████▋    | 111/197 [00:02<00:01, 53.21it/s]Loading weights:  59%|█████▉    | 116/197 [00:03<00:02, 39.33it/s]Loading weights:  57%|█████▋    | 113/197 [00:03<00:01, 47.61it/s]Loading weights:  57%|█████▋    | 112/197 [00:02<00:02, 41.50it/s]Loading weights:  59%|█████▉    | 117/197 [00:02<00:01, 49.10it/s]Loading weights:  71%|███████   | 140/197 [00:03<00:00, 61.69it/s]Loading weights:  70%|██████▉   | 137/197 [00:03<00:01, 47.74it/s]Loading weights:  70%|██████▉   | 137/197 [00:03<00:01, 54.11it/s]Loading weights:  71%|███████   | 139/197 [00:03<00:01, 57.05it/s]Loading weights:  76%|███████▌  | 150/197 [00:03<00:00, 60.39it/s]Loading weights:  73%|███████▎  | 144/197 [00:03<00:01, 50.97it/s]Loading weights:  75%|███████▌  | 148/197 [00:03<00:00, 50.52it/s]Loading weights:  74%|███████▎  | 145/197 [00:03<00:01, 51.51it/s]Loading weights:  77%|███████▋  | 151/197 [00:03<00:01, 41.92it/s]Loading weights:  80%|███████▉  | 157/197 [00:04<00:00, 49.31it/s]Loading weights:  76%|███████▌  | 150/197 [00:03<00:01, 42.23it/s]Loading weights:  79%|███████▊  | 155/197 [00:04<00:00, 43.40it/s]Loading weights:  88%|████████▊ | 174/197 [00:04<00:00, 60.83it/s]Loading weights:  87%|████████▋ | 171/197 [00:03<00:00, 49.87it/s]Loading weights:  90%|████████▉ | 177/197 [00:04<00:00, 57.40it/s]Loading weights:  91%|█████████▏| 180/197 [00:04<00:00, 55.62it/s]Loading weights:  89%|████████▉ | 176/197 [00:04<00:00, 36.87it/s]Loading weights:  92%|█████████▏| 181/197 [00:04<00:00, 38.18it/s]Loading weights:  94%|█████████▍| 186/197 [00:04<00:00, 42.25it/s]Loading weights:  93%|█████████▎| 183/197 [00:04<00:00, 43.13it/s]Loading weights: 100%|██████████| 197/197 [00:04<00:00, 41.18it/s]
-Loading weights: 100%|██████████| 197/197 [00:04<00:00, 41.18it/s]
-Loading weights: 100%|██████████| 197/197 [00:04<00:00, 47.68it/s]
-Loading weights: 100%|██████████| 197/197 [00:04<00:00, 44.70it/s]
-Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights: 100%|██████████| 197/197 [00:00<00:00, 27351.14it/s]
-Loading weights: 100%|██████████| 197/197 [00:00<00:00, 31764.04it/s]
-Loading weights: 100%|██████████| 197/197 [00:00<00:00, 32635.99it/s]
-Loading weights: 100%|██████████| 197/197 [00:00<00:00, 27511.42it/s]
-[rank3]: Traceback (most recent call last):
-[rank3]:   File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 255, in <module>
-[rank3]:     main()
-[rank3]:   File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 172, in main
-[rank3]:     for step in range(starting_step, train_cfg.total_steps + 1):
-[rank3]:                       ^^^^^^^^^^^^^
-[rank3]: NameError: name 'starting_step' is not defined
-[rank2]: Traceback (most recent call last):
-[rank2]:   File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 255, in <module>
-[rank2]:     main()
-[rank2]:   File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 172, in main
-[rank2]:     for step in range(starting_step, train_cfg.total_steps + 1):
-[rank2]:                       ^^^^^^^^^^^^^
-[rank2]: NameError: name 'starting_step' is not defined
-[rank1]: Traceback (most recent call last):
-[rank1]:   File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 255, in <module>
-[rank1]:     main()
-[rank1]:   File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 172, in main
-[rank1]:     for step in range(starting_step, train_cfg.total_steps + 1):
-[rank1]:                       ^^^^^^^^^^^^^
-[rank1]: NameError: name 'starting_step' is not defined
-wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /mmfs1/home/btea/.netrc.
-wandb: Currently logged in as: someonecantcode (someonecantcode-) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
-wandb: setting up run 8petk9lc
-wandb: Tracking run with wandb version 0.30.0
-wandb: Run data is saved locally in /mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/wandb/run-20260929_165821-8petk9lc
-wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run wobbly-firefly-10
-wandb: ⭐️ View project at https://wandb.ai/someonecantcode-/mmDiT-FlowMatching
-wandb: 🚀 View run at https://wandb.ai/someonecantcode-/mmDiT-FlowMatching/runs/8petk9lc
-Starting training
-Traceback (most recent call last):
-  File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 255, in <module>
-    main()
-  File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 172, in main
-    for step in range(starting_step, train_cfg.total_steps + 1):
-                      ^^^^^^^^^^^^^
-NameError: name 'starting_step' is not defined
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 255, in <module>
-[rank0]:     main()
-[rank0]:   File "/mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/train.py", line 172, in main
-[rank0]:     for step in range(starting_step, train_cfg.total_steps + 1):
-[rank0]:                       ^^^^^^^^^^^^^
-[rank0]: NameError: name 'starting_step' is not defined
-[1;34mwandb[0m: 
-[1;34mwandb[0m: 🚀 View run [33mwobbly-firefly-10[0m at: [34mhttps://wandb.ai/someonecantcode-/mmDiT-FlowMatching/runs/8petk9lc[0m
-[1;34mwandb[0m: Find logs at: [1;35m../../../../../mmfs1/gscratch/stf/btea/diffusion-transformer/diffusion/wandb/run-20260929_165821-8petk9lc/logs[0m
-W0929 16:59:02.832000 2048805 /mmfs1/gscratch/stf/btea/conda/envs/myenv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 2053253 closing signal SIGTERM
-W0929 16:59:02.833000 2048805 /mmfs1/gscratch/stf/btea/conda/envs/myenv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 2053254 closing signal SIGTERM
-W0929 16:59:02.833000 2048805 /mmfs1/gscratch/stf/btea/conda/envs/myenv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/api.py:1028] Sending process 2053255 closing signal SIGTERM
-E0929 16:59:03.612000 2048805 /mmfs1/gscratch/stf/btea/conda/envs/myenv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/api.py:1002] failed (exitcode: 1) local_rank: 0 (pid: 2053252) of binary: /gscratch/stf/btea/conda/envs/myenv/bin/python3.12
-Traceback (most recent call last):
-  File "/gscratch/stf/btea/conda/envs/myenv/bin/torchrun", line 6, in <module>
-    sys.exit(main())
-             ^^^^^^
-  File "/gscratch/stf/btea/conda/envs/myenv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 380, in wrapper
-    return f(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^
-  File "/gscratch/stf/btea/conda/envs/myenv/lib/python3.12/site-packages/torch/distributed/run.py", line 1138, in main
-    run(args)
-  File "/gscratch/stf/btea/conda/envs/myenv/lib/python3.12/site-packages/torch/distributed/run.py", line 1129, in run
-    elastic_launch(
-  File "/gscratch/stf/btea/conda/envs/myenv/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 197, in __call__
-    return launch_agent(
-           ^^^^^^^^^^^^^
-  File "/gscratch/stf/btea/conda/envs/myenv/lib/python3.12/site-packages/torch/distributed/launcher/api.py", line 386, in launch_agent
-    raise ChildFailedError(
-torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
-============================================================
-train.py FAILED
-------------------------------------------------------------
-Failures:
-[1]:
-  time      : 2026-09-29_16:59:03
-  host      : g3076.hyak.local
-  rank      : 1 (local_rank: 1)
-  exitcode  : 1 (pid: 2053253) 
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-[2]:
-  time      : 2026-09-29_16:59:03
-  host      : g3076.hyak.local
-  rank      : 2 (local_rank: 2)
-  exitcode  : 1 (pid: 2053254) 
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-[3]:
-  time      : 2026-09-29_16:59:03
-  host      : g3076.hyak.local
-  rank      : 3 (local_rank: 3)
-  exitcode  : 1 (pid: 2053255) 
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-------------------------------------------------------------
-Root Cause (first observed failure):
-[0]:
-  time      : 2026-09-29_16:59:02
-  host      : g3076.hyak.local
-  rank      : 0 (local_rank: 0)
-  exitcode  : 1 (pid: 2053252) 
-  error_file: <N/A>
-  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
-============================================================
