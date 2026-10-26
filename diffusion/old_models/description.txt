@@ -1,0 +1,13 @@
+mmdit config used
+
+@dataclass
+class mmDiTConfig:
+    d_model: int = 512
+    n_heads: int = 4
+    n_blocks: int = 16
+    patch_size: int = 2
+    color_channels: int = 32 # z_channels
+    height: int = 32 # latent
+    width: int = 32 # latent 
+    t_channels: int = 64
+    p_cond: float = 0.2

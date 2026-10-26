@@ -47,8 +47,8 @@ With SLURM:
 
 ```bash
 cd diffusion
-sbatch vae_batchjob.py
-sbatch flowmatch_job.py
+sbatch vae_batchjob.sh
+sbatch flowmatch_job.sh
 ```
 
 ## References

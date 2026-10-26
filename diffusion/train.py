@@ -21,12 +21,13 @@ from ema import EMA
 class TrainConfig:
     lr: float = 1e-4
     batch_size: int = 32
-    total_steps: int = 30000
+    total_steps: int = 15000 # 50k steps is ideal.
     lr_cooldown_steps: int = 20000
     starting_step: int = 0
     logging_interval: int = 100
     grad_accum_steps: int = 2 # not really needed
     save_dir: str = "./saved_models/"
+    ckpt: str = "flowmatch-ckpt.pt"
 
 @dataclass
 class VAEConfig:
@@ -40,8 +41,8 @@ class VAEConfig:
 
 @dataclass
 class mmDiTConfig:
-    d_model: int = 512
-    n_heads: int = 4
+    d_model: int = 1024
+    n_heads: int = 32
     n_blocks: int = 16
     patch_size: int = 2
     color_channels: int = 32 # z_channels
@@ -80,9 +81,30 @@ def getDataLoader(ddp: bool, img_size: int = 256, batch_size: int = 16):
         sampler=sampler,
         shuffle=(sampler is None),
         persistent_workers=True, # for epochs
-        num_workers=1, # cpu cores
+        num_workers=4, # cpu cores
         prefetch_factor=2,
     )
+
+import os
+def save_checkpoint(train_cfg, raw_model, optimizer, ema, step):
+    checkpoint = {
+        'model': raw_model.state_dict(),
+        'optimizer': optimizer.state_dict(),
+        'ema': ema.state_dict,
+        'step': step
+    }
+    torch.save(checkpoint, f"{train_cfg.save_dir}flowmatch-ckpt{step}.pt")
+
+def load_checkpoint(ckpt_path, raw_model, optimizer, ema):
+    if not (os.path.exists(ckpt_path)):
+        print(f"{ckpt_path} PATH NOT FOUND")
+        return 0
+    checkpoint = torch.load(ckpt_path, weights_only=True)
+    
+    raw_model.load_state_dict(checkpoint['model'])
+    optimizer.load_state_dict(checkpoint['optimizer'])
+    ema.load(checkpoint['ema'])
+    return checkpoint['step']
 
 def main():
     ddp = int(os.environ.get('RANK', -1)) != -1 # torch run
@@ -116,9 +138,9 @@ def main():
     vae_cfg = VAEConfig()
     dit_cfg = mmDiTConfig()
     train_cfg = TrainConfig()
-    
+
     T5CLIP = ConditioningEncoders(device=device, debugging=False)
-    
+
     model = mmDiT(
         d_model=dit_cfg.d_model,
         n_heads=dit_cfg.n_heads,
@@ -141,19 +163,19 @@ def main():
     vae.eval()
     for param in vae.parameters():
         param.requires_grad = False
-    vae.load_state_dict(torch.load(train_cfg.save_dir + "vae_compiled_10000.pt", weights_only=True))
+    vae.load_state_dict(torch.load(train_cfg.save_dir + "vae_compiled_10000_ema.pt", weights_only=True))
 
-    if ddp:
-        model = DDP(model, device_ids=[ddp_local_rank]) 
-    raw_model = model.module if ddp else model
-    ema = EMA(raw_model)
-    
+    ema = EMA(model)
     lr = train_cfg.lr
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, fused=True)
+    train_cfg.starting_step = load_checkpoint(train_cfg.save_dir + train_cfg.ckpt, model, optimizer, ema)
+    if ddp:
+        model = DDP(model, device_ids=[ddp_local_rank])
+    raw_model = model.module if ddp else model
+
     dataloader = getDataLoader(ddp=ddp, batch_size = train_cfg.batch_size)
     dataloader_iter = iter(dataloader)
     # -----------------------------------
-    
     if master_process:
         run = wandb.init(
             project="mmDiT-FlowMatching",
@@ -163,7 +185,7 @@ def main():
                 "steps": train_cfg.total_steps,
             },
         )
-        
+
         print("Starting training", flush=True)
         wandb.watch(model, log_freq=100)
 
@@ -171,7 +193,7 @@ def main():
     model.train()
     for step in range(train_cfg.starting_step, train_cfg.total_steps + 1):
         optimizer.zero_grad(set_to_none=True)
-        
+
         loss_accum = torch.tensor(0.0, device=device)
         for micro_step in range(train_cfg.grad_accum_steps):
             if ddp: # wait and sync with all gpus at the end
@@ -186,15 +208,17 @@ def main():
                 batch = next(dataloader_iter)
             images = batch['pixel_values'].to(device, non_blocking=True)
             captions = batch['caption']
-            
+
             with torch.no_grad():
                 t5, pooled, attn_mask = T5CLIP.encode(captions=captions)
                 images, _, _ = vae.encode(images)
-            
+
             time_steps = torch.rand(images.shape[0], device=device)
             epsilon = torch.randn_like(images, device=device)
             # t * z + (1 - t) * epsilon
-            interpolated = torch.einsum('b, b c h w -> b c h w', time_steps, images) + torch.einsum('b, b c h w -> b c h w', 1 - time_steps, epsilon)
+            # interpolated = torch.einsum('b, b c h w -> b c h w', time_steps, images) + torch.einsum('b, b c h w -> b c h w', 1 - time_steps, epsilon)
+            t = time_steps.view(-1, 1, 1, 1)
+            interpolated = t * images + (1.0 - t) * epsilon
             
             device_type = "cuda" if "cuda" in str(device) else str(device)
             with torch.autocast(device_type=device_type, dtype=torch.bfloat16):
@@ -207,14 +231,14 @@ def main():
             loss.backward() # changed due to ddp wrap
         if ddp:
             dist.all_reduce(loss_accum, op=dist.ReduceOp.AVG)
-        
+
         norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-        if (step >= train_cfg.lr_cooldown_steps):
-            lr = max((15000-step)/15e7 , 3e-7)# 5e-4 -> 3e-6 15k steps
-            for param_group in optimizer.param_groups:
-                param_group["lr"] = lr
+        # if (step >= train_cfg.lr_cooldown_steps):
+        #     lr = max((15000-step)/15e7 , 3e-7)# 5e-4 -> 3e-6 15k steps
+        #     for param_group in optimizer.param_groups:
+        #         param_group["lr"] = lr
         optimizer.step()
-        
+
         if master_process:
             ema.update()
             if step % train_cfg.logging_interval == 0:
@@ -224,16 +248,12 @@ def main():
                 print(f"step: {step:5d} | loss: {loss_item:8.4f} | norm: {norm_item:8.4f} | lr: {lr:.9f}", flush=True)
                 
             if step % 2000 == 0:
-                torch.save(raw_model.state_dict(), f"{train_cfg.save_dir}mmDiT_{step}.pt")
-                torch.save(optimizer.state_dict(), f"{train_cfg.save_dir}optim_{step}.pt")
-                ema.checkpoint(f"{train_cfg.save_dir}mmDiT_{step}_ema.pt")
-    
-    if master_process:  
+                save_checkpoint(train_cfg, raw_model, optimizer, ema, step)
+
+    if master_process:
         print("Completed Training")
         run.finish()
-        torch.save(raw_model.state_dict(), f"{train_cfg.save_dir}mmDiT_{step}.pt")
-        torch.save(optimizer.state_dict(), f"{train_cfg.save_dir}optim_{step}.pt")
-        ema.checkpoint(f"{train_cfg.save_dir}mmDiT_{step}_ema.pt")
+        save_checkpoint(train_cfg, raw_model, optimizer, ema, step)
         
         raw_model.eval()
         from torchvision.utils import save_image
@@ -246,9 +266,9 @@ def main():
             final_image = vae.decode(output[total_timesteps - 1].unsqueeze(0))
             save_image(final_image, "sampled_image.png")
         print("Finished Sampling")
-            
+
     if ddp:
-        # dist.barrier() 
+        # dist.barrier()
         dist.destroy_process_group()
         
 if __name__ == '__main__':

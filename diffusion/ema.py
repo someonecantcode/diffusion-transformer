@@ -22,5 +22,5 @@ class EMA:
     def checkpoint(self, file_name: str) -> None:
         torch.save(self.state_dict, file_name)
         
-    def load(self, file_name: str) -> None:
-        self.state_dict = torch.load(file_name, weights_only=True)
+    def load(self, state_dict: dict) -> None:
+        self.state_dict = {k: v.clone() for k, v in state_dict.items()}
