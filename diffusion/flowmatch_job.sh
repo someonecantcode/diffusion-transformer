@@ -3,7 +3,7 @@
 #SBATCH --account=stf
 #SBATCH --partition=ckpt-all
 #SBATCH --gpus=4
-#SBATCH --constraint="2080ti|rtx6k|p100|a40|l40|l40s|a100|h200"
+#SBATCH --constraint="rtx6k|a40|l40|l40s|a100|h200"
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1         # torchrun handles multi-processing, so 1 task is fine
 #SBATCH --cpus-per-gpu=4           # Adjust based on your cluster's CPU-to-GPU ratio

@@ -20,7 +20,7 @@ from ema import EMA
 @dataclass
 class TrainConfig:
     lr: float = 1e-4
-    batch_size: int = 32
+    batch_size: int = 8
     total_steps: int = 15000 # 50k steps is ideal.
     lr_cooldown_steps: int = 20000
     starting_step: int = 0
@@ -41,16 +41,16 @@ class VAEConfig:
 
 @dataclass
 class mmDiTConfig:
-    d_model: int = 1024
+    d_model: int = 768
     n_heads: int = 32
     n_blocks: int = 16
     patch_size: int = 2
     color_channels: int = 32 # z_channels
     height: int = 32 # latent
-    width: int = 32 # latent 
+    width: int = 32 # latent
     t_channels: int = 64
     p_cond: float = 0.2
-    
+
 def getDataLoader(ddp: bool, img_size: int = 256, batch_size: int = 16):
     dataset = load_dataset("arrow", data_files="../data/filtered/*.arrow")
     transform = transforms.Compose(
@@ -183,6 +183,11 @@ def main():
                 "architecture": "FLUX.V1",
                 "dataset": "stanford-vision-lab/gpic",
                 "steps": train_cfg.total_steps,
+                "batch_size": train_cfg.batch_size,
+                "d_model": dit_cfg.d_model,
+                "n_heads": dit_cfg.n_heads,
+                "n_blocks": dit_cfg.n_blocks,
+                "patch_size": dit_cfg.patch_size
             },
         )
 
