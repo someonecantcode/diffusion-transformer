@@ -163,4 +163,3 @@ dependencies:
       - widgetsnbextension==4.0.16
       - xxhash==4.0.1
       - yarl==1.25.1
-prefix: /gscratch/stf/btea/conda/envs/venv
