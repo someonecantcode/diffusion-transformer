@@ -18,7 +18,11 @@ Models: [`diffusion/model.py`](diffusion/model.py), [`diffusion/vae.py`](diffusi
 git clone https://github.com/someonecantcode/diffusion-transformer.git
 cd diffusion-transformer
 
-conda create -name myenv python=3.12
+# Option 1: Create the environment directly from the config file
+conda env create -f environment.yml
+
+# Option 2: Create a fresh environment manually and install via pip
+conda create --name myenv python=3.12
 conda activate myenv
 pip install -r requirements.txt
 ```
