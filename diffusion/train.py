@@ -21,7 +21,7 @@ from ema import EMA
 class TrainConfig:
     lr: float = 1e-4
     batch_size: int = 8
-    total_steps: int = 15000 # 50k steps is ideal.
+    total_steps: int = 10000 # 50k steps is ideal.
     lr_cooldown_steps: int = 20000
     starting_step: int = 0
     logging_interval: int = 100
@@ -263,12 +263,12 @@ def main():
         raw_model.eval()
         from torchvision.utils import save_image
         with torch.no_grad():
-            t5, pooled, attn_mask = T5CLIP.encode(captions=["A cat resting in a grassy field."])
+            t5, pooled, attn_mask = T5CLIP.encode(captions=["A cat resting in a grassy field.", "A cat resting in a grassy field.", "A cat resting in a grassy field.", "A cat resting in a grassy field."])
             total_timesteps = 50
             output = raw_model.sample(total_timesteps, t5, pooled, attn_mask)
             
-            print(output[total_timesteps - 1].unsqueeze(0).shape)
-            final_image = vae.decode(output[total_timesteps - 1].unsqueeze(0))
+            print(output[total_timesteps - 1].shape)
+            final_image = vae.decode(output[total_timesteps - 1])
             save_image(final_image, "sampled_image.png")
         print("Finished Sampling")
 

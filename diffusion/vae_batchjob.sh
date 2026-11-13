@@ -10,6 +10,9 @@
 #SBATCH --time=04:00:00
 #SBATCH --output=job_%j.out         # Standard output and error log (%j inserts Job ID)
 
+module purge
+unset CONDA_PREFIX
+
 module load conda
 conda activate myenv
 export TORCHINDUCTOR_CACHE_DIR=".inductor_cache"

@@ -30,8 +30,10 @@ class Depatchify2D(nn.Module):
         self.height = height
         self.width = width
         self.patch_size = patch_size
-        
         self.deconv = nn.ConvTranspose2d(in_channels=d_model, out_channels=color_channels, kernel_size=patch_size, stride=patch_size)
+        
+        nn.init.zeros_(self.deconv.weight)
+        nn.init.zeros_(self.deconv.bias)
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         h1 = self.height // self.patch_size
@@ -237,6 +239,8 @@ class mmDiT(nn.Module):
         
         self.mlp_adaln = nn.Sequential(nn.SiLU(), nn.Linear(d_model, 2 * d_model))
         self.final_adaln = AdaLN(d_model)
+        nn.init.zeros_(self.mlp_adaln[1].weight)
+        nn.init.zeros_(self.mlp_adaln[1].bias)
         
     def forward(self, data: torch.Tensor, t5_cond: torch.Tensor, time_steps: torch.Tensor, pooled_cond: torch.Tensor, attn_mask, p_drop: float = 0.2) -> torch.Tensor:
         data = self.patchify(data)
@@ -297,7 +301,6 @@ class mmDiT(nn.Module):
 
                 v_cond_half_step = self(half_step_x, t5_cond, half_step_ts, pooled_cond, attn_mask, p_drop=0.0)
                 v_uncond_half_step = self(half_step_x, t5_cond, half_step_ts, pooled_cond, attn_mask, p_drop=1.0)
-
-                v_corrected = v_cond + self.alpha(time_steps, gamma=0, lambda_max=0.8) * (v_cond_half_step - v_uncond_half_step)
+                v_corrected = v_cond + self.alpha(time_steps, gamma=0, lambda_max=0.8).view(-1, 1, 1, 1) * (v_cond_half_step - v_uncond_half_step)
                 X_0 = X_0 + (1 / total_steps) * v_corrected
         return outputs # X_0, ..., X_1
