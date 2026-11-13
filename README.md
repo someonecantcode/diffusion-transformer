@@ -3,6 +3,7 @@
 Attempt at implementing a frankensteined hybrid SD3/FLUX.1-inspired MM-DiT for latent flow matching (LFM) image generation.
 
 <img src="diffusion/sampled_image.png" width="800" alt="4 Sampled Images of &quot;A cat resting in a grassy field.&quot;">
+
 ## Set-up
 
 Main files in [`diffusion/`](diffusion/)
